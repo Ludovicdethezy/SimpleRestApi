@@ -1031,13 +1031,13 @@ namespace hostlink
     }
     
     [System.CodeDom.Compiler.GeneratedCode("NSwag", "13.0.5.0 (NJsonSchema v10.0.22.0 (Newtonsoft.Json v11.0.0.0))")]
-    public partial class Order
+    public partial class Param
     {
         private string _baseUrl = "/api/v1/";
         private System.Net.Http.HttpClient _httpClient;
         private System.Lazy<Newtonsoft.Json.JsonSerializerSettings> _settings;
     
-        public Order(System.Net.Http.HttpClient httpClient)
+        public Param(System.Net.Http.HttpClient httpClient)
         {
             _httpClient = httpClient; 
             _settings = new System.Lazy<Newtonsoft.Json.JsonSerializerSettings>(() => 
@@ -1066,9 +1066,9 @@ namespace hostlink
         /// <param name="body">The parameter value or an error code along with the name of the requested parameter.</param>
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public System.Threading.Tasks.Task AckAsync(string orderId, ParameterRequestAnswer body)
+        public System.Threading.Tasks.Task ParAckAsync(string orderId, ParameterRequestAnswer body)
         {
-            return AckAsync(orderId, body, System.Threading.CancellationToken.None);
+            return ParAckAsync(orderId, body, System.Threading.CancellationToken.None);
         }
     
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
@@ -1077,7 +1077,7 @@ namespace hostlink
         /// <param name="body">The parameter value or an error code along with the name of the requested parameter.</param>
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public async System.Threading.Tasks.Task AckAsync(string orderId, ParameterRequestAnswer body, System.Threading.CancellationToken cancellationToken)
+        public async System.Threading.Tasks.Task ParAckAsync(string orderId, ParameterRequestAnswer body, System.Threading.CancellationToken cancellationToken)
         {
             if (orderId == null)
                 throw new System.ArgumentNullException("orderId");
@@ -1261,13 +1261,13 @@ namespace hostlink
     }
     
     [System.CodeDom.Compiler.GeneratedCode("NSwag", "13.0.5.0 (NJsonSchema v10.0.22.0 (Newtonsoft.Json v11.0.0.0))")]
-    public partial class Ordre 
+    public partial class Order 
     {
         private string _baseUrl = "/api/v1/";
         private System.Net.Http.HttpClient _httpClient;
         private System.Lazy<Newtonsoft.Json.JsonSerializerSettings> _settings;
     
-        public Ordre(System.Net.Http.HttpClient httpClient)
+        public Order(System.Net.Http.HttpClient httpClient)
         {
             _httpClient = httpClient; 
             _settings = new System.Lazy<Newtonsoft.Json.JsonSerializerSettings>(() => 

@@ -1,5 +1,6 @@
 ﻿using hostlink;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -30,6 +31,7 @@ namespace SimpleRestApi
                 string end_reason = "";
                 string end_status = "";
                 string created = "";
+                string agv = "";
 
                 HttpClient client2 = new HttpClient();
                 var sys = new Client(client2);
@@ -57,8 +59,16 @@ namespace SimpleRestApi
                             DateTimeOffset crea = ev.created_at;
                             DateTimeOffset startd = ev.payload.drive_start_time;
                             string step = ev.payload.step_index;
+                            foreach (var item in (Newtonsoft.Json.Linq.JContainer)ev.payload.custom_data)
+                            {
+                                if (((Newtonsoft.Json.Linq.JProperty)item).Name.ToString() == "AGV")
+                                {
+                                    agv= ((Newtonsoft.Json.Linq.JProperty)item).Value.ToString();
+                                }
 
-                            if ( ack == "False")
+                            }   
+
+                                if ( ack == "False")
                             {
                                 if (step == "0")
 
@@ -66,7 +76,7 @@ namespace SimpleRestApi
                                     {
                                         status = "AGV waiting fetched ack";
                                         //MainWindow.updatedb(To_id, DateTimeOffset.Parse(start_time), status, int.Parse(Ev_id));
-                                       MainWindow.UpdateOrder(To_id, startd.ToString(),"0" ,step,status);
+                                       MainWindow.UpdateOrder(To_id, startd.ToString(),agv ,step,status);
                                     }
                                     else
                                     {
@@ -74,7 +84,7 @@ namespace SimpleRestApi
 
                                         //MainWindow.updatedb_error(To_id, DateTimeOffset.Parse(start_time), status, error, int.Parse(Ev_id));
                                         // MainWindow.updatedb_error(To_id, startd, status, error, int.Parse(Ev_id));
-                                        MainWindow.UpdateOrder(To_id, startd.ToString(), "0", step, status);
+                                        MainWindow.UpdateOrder(To_id, startd.ToString(), agv, step, status);
 
                                     }
 
@@ -86,7 +96,7 @@ namespace SimpleRestApi
                                     status = "AGV waiting delivered ack";
                                     //MainWindow.updateendoforder(To_id, DateTimeOffset.Parse(created), status, int.Parse(Ev_id));
                                     // MainWindow.updateendoforder(To_id, crea, status, int.Parse(Ev_id));
-                                    MainWindow.UpdateOrder(To_id, startd.ToString(), "0", step, status);
+                                    MainWindow.UpdateOrder(To_id, startd.ToString(), agv, step, status);
                                 }
 
 
@@ -95,7 +105,7 @@ namespace SimpleRestApi
                                     status = "AGV waiting ack " + end_status.ToString();
                                     //MainWindow.updateendoforder_error(To_id, DateTimeOffset.Parse(start_time), status, error, int.Parse(Ev_id));
                                     //   MainWindow.updateendoforder_error(To_id, startd, status, error, int.Parse(Ev_id));
-                                    MainWindow.UpdateOrder(To_id, startd.ToString(), "0", step, status);
+                                    MainWindow.UpdateOrder(To_id, startd.ToString(), agv, step, status);
                                 }
 
                             }
@@ -112,14 +122,14 @@ namespace SimpleRestApi
                                         status = "Pallet fetched";
                                         //MainWindow.updatedb(To_id, DateTimeOffset.Parse(start_time), status, int.Parse(Ev_id));
                                         //  MainWindow.updatedb(To_id, startd, status, int.Parse(Ev_id));
-                                        MainWindow.UpdateOrder(To_id, startd.ToString(), "0", step, status);
+                                        MainWindow.UpdateOrder(To_id, startd.ToString(), agv, step, status);
                                     }
                                     else
                                     {
                                         status = end_status.ToString();
                                         // MainWindow.updatedb_error(To_id, DateTimeOffset.Parse(start_time), status, error, int.Parse(Ev_id));
                                         //  MainWindow.updatedb_error(To_id, startd, status, error, int.Parse(Ev_id));
-                                        MainWindow.UpdateOrder(To_id, startd.ToString(), "0", step, status);
+                                        MainWindow.UpdateOrder(To_id, startd.ToString(), agv, step, status) ;
                                     }
 
 
@@ -131,7 +141,7 @@ namespace SimpleRestApi
                                         status = "Pallet delivered";
                                         // MainWindow.updateendoforder(To_id, DateTimeOffset.Parse(created), status, int.Parse(Ev_id));
                                         //   MainWindow.updateendoforder(To_id, crea, status, int.Parse(Ev_id));
-                                        MainWindow.UpdateOrder(To_id, startd.ToString(), "0", step, status);
+                                        MainWindow.UpdateOrder(To_id, startd.ToString(), agv, step, status);
                                     }
 
 
@@ -140,7 +150,7 @@ namespace SimpleRestApi
                                         status = end_status.ToString();
                                         // MainWindow.updateendoforder_error(To_id, DateTimeOffset.Parse(start_time), status, error, int.Parse(Ev_id));
                                         //  MainWindow.updateendoforder_error(To_id, startd, status, error, int.Parse(Ev_id));
-                                        MainWindow.UpdateOrder(To_id, startd.ToString(), "0", step, status);
+                                        MainWindow.UpdateOrder(To_id, startd.ToString(), agv, step, status);
                                     }
                                 }
                             }
@@ -154,6 +164,14 @@ namespace SimpleRestApi
                             string status;
                             string step = ev.payload.step_index;
                             DateTimeOffset startd = ev.payload.drive_start_time;
+                            foreach (var item in (Newtonsoft.Json.Linq.JContainer)ev.payload.custom_data)
+                            {
+                                if (((Newtonsoft.Json.Linq.JProperty)item).Name.ToString() == "AGV")
+                                {
+                                    agv = ((Newtonsoft.Json.Linq.JProperty)item).Value.ToString();
+                                }
+
+                            }
 
                             if ( ack == "False")
                             {
@@ -161,7 +179,7 @@ namespace SimpleRestApi
                                     status = "AGV waiting ack to fetch";
                                 else
                                     status = "AGV waiting ack to deliver";
-                                MainWindow.UpdateOrder(To_id, startd.ToString(), "0", step, status);
+                                MainWindow.UpdateOrder(To_id, startd.ToString(),agv ,step, status);
                                 // MainWindow.updatedb(To_id, DateTimeOffset.Parse(start_time.ToString()), status, int.Parse(Ev_id));
                                 // MainWindow.updatedb(To_id, startd, status, int.Parse(Ev_id));
 
@@ -174,7 +192,7 @@ namespace SimpleRestApi
                                     status = "AGV ready to fetch";
                                 else
                                     status = "AGV ready to deliver";
-                                MainWindow.UpdateOrder(To_id, startd.ToString(), "0", step, status);
+                                MainWindow.UpdateOrder(To_id, startd.ToString(),agv, step, status);
                                 // MainWindow.updatedb(To_id, DateTimeOffset.Parse(start_time.ToString()), status, int.Parse(Ev_id));
                                 // MainWindow.updatedb(To_id, startd, status, int.Parse(Ev_id));
                             }
@@ -197,12 +215,10 @@ namespace SimpleRestApi
 
                             HttpClient client = new HttpClient();
 
-                            //var syspar = new ParameterClient(client);
-                            //if (MainWindow.usew == true)
-                            //    syspar.BaseUrl = "http://" + MainWindow.WIP_host + "/api/v1/";
-                            //else
-                            //    syspar.BaseUrl = "http://" + MainWindow.IP_host + "/api/v1/";
-                            //syspar.ParAsync(To_id, stp1);
+                            var syspar = new Param(client);
+                           
+                                syspar.BaseUrl = "http://" + WIP_host + "/api/v1/";
+                            syspar.ParAckAsync(To_id, stp1);
 
 
 
@@ -223,13 +239,11 @@ namespace SimpleRestApi
                             };
 
                             HttpClient client = new HttpClient();
-                            //var syspar = new ParameterClient(client);
-                            //if (MainWindow.usew == true)
-                            //    syspar.BaseUrl = "http://" + MainWindow.WIP_host + "/api/v1/";
-                            //else
-                            //    syspar.BaseUrl = "http://" + MainWindow.IP_host + "/api/v1/";
 
-                            //syspar.ParAsync(To_id, stp1);
+                            var syspar = new Param(client);
+
+                            syspar.BaseUrl = "http://" + WIP_host + "/api/v1/";
+                            syspar.ParAckAsync(To_id, stp1);
 
 
 
@@ -340,21 +354,22 @@ namespace SimpleRestApi
 
                     case var s when type.Contains("UnconnectedOrderCreatedEvent"):
                         {
-                        //    var tcwo = new TransportOrderDefinition();
-                        //    tcwo = MainWindow.NewcarwahTO();
-                        //    var sys2 = new OrderClient(client2);
-                         
-                        //        sys2.BaseUrl = "http://" + MainWindow.WIP_host + "/api/v1/";
+                            var tcwo = new TransportOrderDefinition();
                            
-                        //    try
-                        //    {
-                        //        var x2 = sys2.AckAsync(int.Parse(Ev_id), tcwo).GetAwaiter().GetResult();
-                        //    }
-                        //    catch
-                        //    {
-                        //        Console.WriteLine(" Problem with carwash  ");
+                            tcwo = Orders.NewcarwahTO();
+                            var sys2 = new Order(client2);
 
-                        //    }
+                            sys2.BaseUrl = "http://" + WIP_host + "/api/v1/";
+
+                            try
+                            {
+                                var x2 = sys2.AckAsync(int.Parse(Ev_id), tcwo).GetAwaiter().GetResult();
+                            }
+                            catch
+                            {
+                                Console.WriteLine(" Problem with carwash  ");
+
+                            }
                             break;
                         }
 
@@ -364,9 +379,9 @@ namespace SimpleRestApi
                             string est_finished_time = ev.data.estimated_finish_time;
                             // DateTimeOffset fin= ev.data.estimated_finish_time;
                             // string agvs = ev.data.current_agvs[].Lenght;
-                            int agv = 0;
+                            int agv2 = 0;
                             if (((Newtonsoft.Json.Linq.JArray)ev.data.current_agvs).Count != 0)
-                                agv = (int)ev.data.current_agvs.First.Value;
+                                agv2 = (int)ev.data.current_agvs.First.Value;
                             string csutom = JsonConvert.SerializeObject(ev.data.custom_fields);
                             if (est_finished_time != null)
                             {

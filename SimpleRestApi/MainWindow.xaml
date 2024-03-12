@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:SimpleRestApi"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="1027">
+        Title="Simple Rocla Rest Api Interface" Height="450" Width="1027">
     <Grid Background="{DynamicResource {x:Static SystemColors.ControlLightBrushKey}}">
         <Grid.ColumnDefinitions>
             <ColumnDefinition/>
@@ -18,7 +18,7 @@
         <TextBox x:Name="deliver" HorizontalAlignment="Left" Margin="165,20,0,0" TextWrapping="Wrap" Text="0" VerticalAlignment="Top" Width="64" Height="18"/>
         <TextBox x:Name="AGV" HorizontalAlignment="Left" Margin="267,20,0,0" TextWrapping="Wrap" Text="0" VerticalAlignment="Top" Width="64" Height="18"/>
         <DataGrid x:Name="order_list"   Margin="0,184,0,0" HorizontalAlignment="Left" Width="513">
-           
+
         </DataGrid>
         <ListView x:Name="logview" d:ItemsSource="{d:SampleData ItemCount=5}" Margin="523,0,0,0">
             <ListView.View>
@@ -27,8 +27,12 @@
                 </GridView>
             </ListView.View>
         </ListView>
-        <Button x:Name="eventreceive_ack" Content="receive ack event" HorizontalAlignment="Left" Margin="409,19,0,0" VerticalAlignment="Top" Height="19" Width="99" Click="eventreceive_ack_Click"/>
-        <Button x:Name="start_web" Content="start webhook" HorizontalAlignment="Left" Margin="418,57,0,0" VerticalAlignment="Top" Width="81" Click="start_web_Click"/>
+        <Button x:Name="eventreceive_ack" Content="receive ack event" HorizontalAlignment="Left" Margin="409,19,0,0" VerticalAlignment="Top" Height="19" Width="99" Click="Eventreceive_ack_Click"/>
+        <Button x:Name="start_web" Content="start webhook" HorizontalAlignment="Left" Margin="418,99,0,0" VerticalAlignment="Top" Width="81" Click="Start_web_Click"/>
+        <TextBox x:Name="carwash" HorizontalAlignment="Left" Margin="267,49,0,0" TextWrapping="Wrap" Text="413" VerticalAlignment="Top" Width="64" Height="18" x:FieldModifier="public" />
+        <Label Content="default Location" HorizontalAlignment="Left" Margin="165,45,0,0" VerticalAlignment="Top" Height="26" Width="97"/>
+        <Label Content="Webhook adress" HorizontalAlignment="Left" Margin="0,93,0,0" VerticalAlignment="Top" Height="26" Width="97"/>
+        <TextBox x:Name="Webhook_adress" HorizontalAlignment="Left" Margin="114,97,0,0" TextWrapping="Wrap" Text="http://+:8001/order/" VerticalAlignment="Top" Width="132" Height="18"/>
 
     </Grid>
 </Window>

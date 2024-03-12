@@ -25,6 +25,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using static SimpleRestApi.Orders;
 using static System.Net.Mime.MediaTypeNames;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace SimpleRestApi
 {
@@ -34,49 +35,77 @@ namespace SimpleRestApi
    
     public partial class MainWindow : Window
     { 
-        DataTable dtable = new DataTable();
-        public string WIP_host = "localhost:8018";// ip of fleetcontroler 
-        public string ip_host_webhooks = "http://+:8001/order/";// ip of fleetcontroler 
+       
+        public static string WIP_host = "localhost:8018";// ip of fleetcontroler 
+        public static string ip_host_webhooks = "http://+:8001/order/";// ip of fleetcontroler 
         private bool test2;
-        public static  BindingList<Orderrow>   _orderlist;
-        Thread c;
+        public static  BindingList<Orderrow>?   _orderlist;
+        public static string? carwash_location ="";
+        Thread? c;
 
         public MainWindow()
         {
             InitializeComponent();
-            DataTable dtable = new DataTable();
-            dtable.Columns.Add("orderid", typeof(string));
-            dtable.Columns.Add("fetch", typeof(string));
-            dtable.Columns.Add("deliver", typeof(string));
-            dtable.Columns.Add("Date", typeof(DateTime));
-            dtable.Columns.Add("AGV", typeof(string));
+           
             _orderlist= new BindingList<Orderrow>();
             order_list.ItemsSource = _orderlist;
 
-            getOrder();
-
-
-        }
-
-
-
-        public class custom_dataC
-        {
-            public string? LoadWeight { get; set; }
-            public string? LoadDimensionX { get; set; }
-            public string? LoadDimensionY { get; set; }
-            public string? FetchHeight { get; set; }
-            public string? DeliverHeight { get; set; }
-
-            public string? AGV { get; set; }
-            public string? Area { get; set; }
-
-            public int? Sequence { get; set; }
+            GetOrder();
+            carwash_location = carwash.Text;
 
         }
 
 
-        public static  void addorder(string orderid, string fetch, string deliver, string date, string agv, string step, string status)
+
+        //public class Custom_dataC
+        //{
+        //    public string? LoadWeight { get; set; }
+        //    public string? LoadDimensionX { get; set; }
+        //    public string? LoadDimensionY { get; set; }
+        //    public string? FetchHeight { get; set; }
+        //    public string? DeliverHeight { get; set; }
+
+        //    public string? AGV { get; set; }
+        //    public string? Area { get; set; }
+
+        //    public int? Sequence { get; set; }
+
+        //}
+       // public  TransportOrderDefinition NewcarwahTO()
+       // {
+
+       //     TransportOrderStep stp1 = new TransportOrderStep
+       //     {
+       //         Operation_type = "Drop",
+       //         Addresses = new string[] { carwash.Text }
+       //     };
+
+
+       //     Custom_dataC custom = new Custom_dataC
+       //     {
+       //         LoadWeight = "0",
+       //         LoadDimensionX = "0",
+       //         LoadDimensionY = "0",
+       //         FetchHeight = "0",
+       //         DeliverHeight = "0",
+              
+       //     };
+
+       //     var to = new TransportOrderDefinition
+       //     {
+       //         Transport_order_id = DateTime.Now.Subtract(new DateTime(1970, 1, 1)).TotalSeconds.ToString(),
+       //         Transport_unit_type = "Pallet",
+       //         Start_time = null,
+       //         End_time = DateTimeOffset.UtcNow.AddMinutes(10),
+       //         Custom_data = custom,
+       //         Steps = new TransportOrderStep[] { stp1 },
+       //         Partial_steps = false,
+       //     };
+       //     return to;
+       //}
+
+
+            public static  void Addorder(string orderid, string fetch, string deliver, string date, string agv, string step, string status)
         {
             var ord = new Orderrow
             {
@@ -108,7 +137,7 @@ namespace SimpleRestApi
         
             }
 
-        public void getOrder()
+        public void GetOrder()
         {
 
             try
@@ -129,7 +158,7 @@ namespace SimpleRestApi
                         ad[i] = stp.Addresses.First();
                         i++;
                     }
-                    addorder(item.Transport_order_id, ad[0], ad[1], item.End_time.ToString(), "x", "", "");
+                    Addorder(item.Transport_order_id, ad[0], ad[1], item.End_time.ToString(), "x", "", "");
                    // order_list.Items.Add(new { OrderId = item.Transport_order_id, Fetch = ad[0], Deliver = ad[1], Date = item.End_time.ToString(), AGV = "x" });
 
                 }
@@ -174,7 +203,7 @@ namespace SimpleRestApi
 
 
                 // create data for custome data  like AGV number , fetch /deliver height , or anything else relevent for the order to work 
-                custom_dataC custom = new custom_dataC
+               Custom_dataC custom = new Custom_dataC
                 {
 
                     AGV = AGV.Text,
@@ -194,9 +223,8 @@ namespace SimpleRestApi
                     Partial_steps = false,
                 };
 
-                // dtable.Rows.Add(to.Transport_order_id);
-                addorder(to.Transport_order_id, fetch2, deliver2, to.End_time.ToString(), "x", "", "");
-                ///order_list.Items.Add(new { OrderId = to.Transport_order_id, Fetch = fetch2, Deliver = deliver2, Date = to.End_time.ToString(), AGV = AG });
+                
+                Addorder(to.Transport_order_id, fetch2, deliver2, to.End_time.ToString(), "x", "", "");
                 var x2 = sys.Orders2Async(to, to.Transport_order_id).GetAwaiter().GetResult();
             }
             catch (Exception ex)
@@ -208,7 +236,7 @@ namespace SimpleRestApi
         }
 
         // show log 
-        private void WriteMessage(string message, Brush color, ListView lv)
+        public  void WriteMessage(string message, Brush color, ListView lv)
         {
 
             Dispatcher.BeginInvoke(new Action(delegate
@@ -223,7 +251,7 @@ namespace SimpleRestApi
             }));
         }
 
-        private  void updateord()
+        private  void Updateord()
         {
 
             Dispatcher.BeginInvoke(new Action(delegate
@@ -233,17 +261,20 @@ namespace SimpleRestApi
             }));
         }
 
-        private void eventreceive_ack_Click(object sender, RoutedEventArgs e)
+        private void Eventreceive_ack_Click(object sender, RoutedEventArgs e)
         {
             HttpClient client2 = new HttpClient();
             var sys = new Client(client2);
+            string status ;
+            string agv = "0";
+           
             sys.BaseUrl = "http://" + WIP_host + "/api/v1/";
             try
             {
 
                
                     var x = sys.EventsAllAsync(10, true, 0, null).GetAwaiter().GetResult();
-
+                
                     foreach (Event item in x)
                     {
                        
@@ -252,14 +283,14 @@ namespace SimpleRestApi
                         if (item.Type == "AgvOperationEndEvent")
                         {
 
-                            item.Payload.AdditionalProperties.TryGetValue("address", out object adress);
-                            item.Payload.AdditionalProperties.TryGetValue("transport_order_id", out object id);
-                            item.Payload.AdditionalProperties.TryGetValue("step_index", out object step);
-                            item.Payload.AdditionalProperties.TryGetValue("drive_start_time", out object start);
-                            item.Payload.AdditionalProperties.TryGetValue("error_name", out object error);
-                            item.Payload.AdditionalProperties.TryGetValue("end_status", out object status_op);
+                            item.Payload.AdditionalProperties.TryGetValue("address", out object? adress);
+                            item.Payload.AdditionalProperties.TryGetValue("transport_order_id", out object? id);
+                            item.Payload.AdditionalProperties.TryGetValue("step_index", out object? step);
+                            item.Payload.AdditionalProperties.TryGetValue("drive_start_time", out object? start);
+                            item.Payload.AdditionalProperties.TryGetValue("error_name", out object? error);
+                            item.Payload.AdditionalProperties.TryGetValue("end_status", out object? status_op);
                             //Console.WriteLine(" validation adress: {0},transport_order_id : {1} , step {2} ", value, value2, value3);
-                            string er;
+                            string? er;
                             if (error == null)
                                 er = "";
                             else er = error.ToString();
@@ -269,56 +300,58 @@ namespace SimpleRestApi
                  
                                           
                          
-                                sys.ContinueAsync(id.ToString(), item.Event_id);
+                              sys.ContinueAsync(id.ToString(), item.Event_id);
                                 Console.WriteLine(" ack operation envoyé ");
 
-                        WriteMessage(" * t_id : " + id.ToString() + " ack sent for adresse: " + adress.ToString() + ", step: " + step.ToString(), Brushes.Red, logview);
+                        WriteMessage(" * t_id : " + id.ToString() + " ack sent for adresse: " + adress.ToString() + ", step: " + step.ToString(), Brushes.Blue, logview);
 
 
-                        //if (value3.ToString() == "0")
-                        //{
+                        if (step.ToString() == "0")
+                        {
 
-                        //    if (status_op.ToString() == "Success")
-                        //    {
-                        //        status = "Pallet fetched";
-                        //        updatedb(value2.ToString(), DateTimeOffset.Parse(value4.ToString()), status, item.Event_id);
-                        //    }
-                        //    else
-                        //    {
-                        //        status = status_op.ToString();
-                        //    }
+                            if (status_op.ToString() == "Success")
+                            {
+                                status = "Pallet fetched";
+                               
+                            }
+                            else
+                            {
+                                status = status_op.ToString();
+                            }
+                            UpdateOrder(id.ToString(), start.ToString(), agv, step.ToString(), status.ToString());
+                            WriteMessage(" * t_id : " + id.ToString() + "  : adress:" + adress.ToString() + ", step: " + step.ToString() + " " + status, Brushes.Red, logview);
 
-                        //    updatedb_error(value2.ToString(), DateTimeOffset.Parse(value4.ToString()), status, error.ToString(), item.Event_id);
-                        //}
-                        //else
-                        //{
-                        //    if (status_op.ToString() == "Success")
-                        //    {
-                        //        status = "Pallet delivered";
-                        //        updateendoforder(value2.ToString(), item.Created_at, status, item.Event_id);
-                        //    }
-
-
-                        //    else
-                        //    {
-                        //        status = status_op.ToString();
-                        //        updateendoforder_error(value2.ToString(), item.Created_at, status, error.ToString(), item.Event_id);
-                        //    }
+                        }
+                        else
+                        {
+                            if (status_op.ToString() == "Success")
+                            {
+                                status = "Pallet delivered";
+                              
+                            }
 
 
+                            else
+                            {
+                                status = status_op.ToString();
+                               
+                            }
 
-                        //}
+                            UpdateOrder(id.ToString(), start.ToString(), agv, step.ToString(), status.ToString());
+                            WriteMessage(" * t_id : " + id.ToString() + " finish : adress:" + adress.ToString() + ", step: " + step.ToString() + " "+ status, Brushes.Red, logview);
+
+                        }
 
 
-                        // refresh_orderDG();
+
 
                     }
                     if (item.Type == "AgvArrivedToAddressEvent")
                     {
-                        item.Payload.AdditionalProperties.TryGetValue("address", out object adress);
-                        item.Payload.AdditionalProperties.TryGetValue("transport_order_id", out object id);
-                            item.Payload.AdditionalProperties.TryGetValue("step_index", out object step);
-                            item.Payload.AdditionalProperties.TryGetValue("drive_start_time", out object start);
+                        item.Payload.AdditionalProperties.TryGetValue("address", out object? adress);
+                        item.Payload.AdditionalProperties.TryGetValue("transport_order_id", out object? id);
+                            item.Payload.AdditionalProperties.TryGetValue("step_index", out object? step);
+                            item.Payload.AdditionalProperties.TryGetValue("drive_start_time", out object? start);
                             
 
                           
@@ -338,52 +371,53 @@ namespace SimpleRestApi
                         {
                             Console.WriteLine("carwash");
 
-                            //var tcwo = new TransportOrderDefinition();
-                            //tcwo = NewcarwahTO();
-                            //var sys2 = new OrderClient(client2);
-                            //try
-                            //{
-                            //    var x2 = sys2.AckAsync(item.Event_id, tcwo).GetAwaiter().GetResult();
-                            //}
-                            //catch
-                            //{
-                            //    Console.WriteLine(" Problem with carwash  ");
-
-                            //}
-
-                            ////refresh_orderDG();
+                        var tcwo = new TransportOrderDefinition();
+                        tcwo = Orders.NewcarwahTO();
+                        var sys2 = new Order(client2);
+                        try
+                        {
+                            var x2 = sys2.AckAsync(item.Event_id, tcwo).GetAwaiter().GetResult();
+                            WriteMessage(" carwash ", Brushes.Red, logview);
+                        }
+                        catch
+                        {
+                            Console.WriteLine(" Problem with carwash  ");
 
                         }
-                        //if (item.Type == "ParameterUpdateEvent")
-                        //{
-                        //    Console.WriteLine("event update");
-                        //    item.Payload.AdditionalProperties.TryGetValue("parameter_name", out object name);
-                        //    item.Payload.AdditionalProperties.TryGetValue("transport_order_id", out object To_id);
-                        //    item.Payload.AdditionalProperties.TryGetValue("parameter_value", out object value);
-                        //    //   item.Payload.AdditionalProperties.TryGetValue("drive_start_time", out object value4);
 
 
-
-
-                        //    ParameterRequestAnswer stp1 = new ParameterRequestAnswer
-                        //    {
-                        //        Event_id = item.Event_id,
-                        //        Parameter_name = name.ToString(),
-                        //        Parameter_value = value.ToString()
-                        //    };
-
-                        //    HttpClient client = new HttpClient();
-
-                        //    var syspar = new ParameterClient(Client);
-
-                        //    syspar.BaseUrl = "http://" + IP_host + "/api/v1/";
-                        //    syspar.ParAsync(To_id.ToString(), stp1);
-
-
-
-
-                        //}
+                      
                     }
+                    if (item.Type == "ParameterUpdateEvent")
+                    {
+                        Console.WriteLine("event update");
+                        item.Payload.AdditionalProperties.TryGetValue("parameter_name", out object? name);
+                        item.Payload.AdditionalProperties.TryGetValue("transport_order_id", out object? To_id);
+                        item.Payload.AdditionalProperties.TryGetValue("parameter_value", out object? value);
+                        //   item.Payload.AdditionalProperties.TryGetValue("drive_start_time", out object value4);
+
+
+
+
+                        ParameterRequestAnswer stp1 = new ParameterRequestAnswer
+                        {
+                            Event_id = item.Event_id,
+                            Parameter_name = name.ToString(),
+                            Parameter_value = value.ToString()
+                        };
+
+                        HttpClient client = new HttpClient();
+
+                        var syspar = new Param(client);
+
+                        syspar.BaseUrl = "http://" + WIP_host + "/api/v1/";
+                        syspar.ParAckAsync(To_id.ToString(), stp1);
+
+                        WriteMessage(" * t_id : " + To_id.ToString() + " parameter:" + name.ToString() + ", value: " + value.ToString(), Brushes.Orange, logview);
+
+
+                    }
+                }
 
 
                 
@@ -402,14 +436,17 @@ namespace SimpleRestApi
            
         }
 
-        private async void start_web_Click(object sender, RoutedEventArgs e)
+        private async void Start_web_Click(object sender, RoutedEventArgs e)
         {
+            
+            
             if (test2)
             {
                 try
                 {
 
-                    string url = "http://localhost:8001/";
+                  
+                    string url = ip_host_webhooks.Replace("+", "localhost");
 
                     HttpClient client = new HttpClient();
                     var requestData = new { type = "stop" };
@@ -434,18 +471,18 @@ namespace SimpleRestApi
             }
             else
             {
-                
+                ip_host_webhooks = Webhook_adress.Text;
                 start_web.Content = "stop Webhook \n listening ";
                 start_web.Background = Brushes.OrangeRed;
-                WriteMessage("Test: start Listening on " +" localhost:8001 ", Brushes.MediumPurple, logview);
+                WriteMessage("Test: start Listening on " + Webhook_adress.Text, Brushes.MediumPurple, logview);
                 test2 = true;
-                c = new Thread(serverAsync);
+                c = new Thread(ServerAsync);
                 c.IsBackground = true;
                 c.Start();
             }
         }
 
-        private void serverAsync(object? obj)
+        private void ServerAsync()
         {
             try
             {
@@ -468,7 +505,7 @@ namespace SimpleRestApi
                     HttpListenerContext ctx = listener.GetContext();
                     HttpListenerRequest request = ctx.Request;
                     // Console.WriteLine($"Received request for {request.Url}");
-                    string ua = request.Headers.Get("User-Agent");
+                    string? ua = request.Headers.Get("User-Agent");
                     Console.WriteLine($"{request.HttpMethod} {request.Url}");
 
                     var body = request.InputStream;
@@ -536,7 +573,7 @@ namespace SimpleRestApi
                     response.ContentType = "text/plain";
                     response.OutputStream.Write(new byte[] { }, 0, 0);
                     response.OutputStream.Close();
-                    updateord();
+                    Updateord();
         
 
                     }
@@ -552,6 +589,7 @@ namespace SimpleRestApi
             }
 
         }
-    
+
+       
     }    
 }
