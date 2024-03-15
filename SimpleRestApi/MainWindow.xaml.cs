@@ -1,47 +1,39 @@
 ﻿using hostlink;
 using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Data;
-using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Net;
-using System.Net.Http;
-using System.Security.Cryptography;
 using System.Text;
-using System.Text.RegularExpressions;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using static SimpleRestApi.Orders;
-using static System.Net.Mime.MediaTypeNames;
-using static System.Runtime.InteropServices.JavaScript.JSType;
+using System.Net.Http;
+using Newtonsoft.Json.Linq;
+using System.Globalization;
+using System.Data;
+using System.ComponentModel.DataAnnotations;
+
 
 namespace SimpleRestApi
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-   
+
     public partial class MainWindow : Window
     { 
        
         public static string WIP_host = "localhost:8018";// ip of fleetcontroler 
         public static string ip_host_webhooks = "http://+:8001/order/";// ip of fleetcontroler 
         private bool test2;
-        public static  BindingList<Orderrow>?   _orderlist;
-        public static string? carwash_location ="";
-        Thread? c;
+        public static  BindingList<Orderrow>   _orderlist;
+        public static string carwash_location ="";
+        Thread c;
 
         public MainWindow()
         {
@@ -283,14 +275,14 @@ namespace SimpleRestApi
                         if (item.Type == "AgvOperationEndEvent")
                         {
 
-                            item.Payload.AdditionalProperties.TryGetValue("address", out object? adress);
-                            item.Payload.AdditionalProperties.TryGetValue("transport_order_id", out object? id);
-                            item.Payload.AdditionalProperties.TryGetValue("step_index", out object? step);
-                            item.Payload.AdditionalProperties.TryGetValue("drive_start_time", out object? start);
-                            item.Payload.AdditionalProperties.TryGetValue("error_name", out object? error);
-                            item.Payload.AdditionalProperties.TryGetValue("end_status", out object? status_op);
+                            item.Payload.AdditionalProperties.TryGetValue("address", out object adress);
+                            item.Payload.AdditionalProperties.TryGetValue("transport_order_id", out object id);
+                            item.Payload.AdditionalProperties.TryGetValue("step_index", out object step);
+                            item.Payload.AdditionalProperties.TryGetValue("drive_start_time", out object start);
+                            item.Payload.AdditionalProperties.TryGetValue("error_name", out object error);
+                            item.Payload.AdditionalProperties.TryGetValue("end_status", out object status_op);
                             //Console.WriteLine(" validation adress: {0},transport_order_id : {1} , step {2} ", value, value2, value3);
-                            string? er;
+                            string er;
                             if (error == null)
                                 er = "";
                             else er = error.ToString();
@@ -348,10 +340,10 @@ namespace SimpleRestApi
                     }
                     if (item.Type == "AgvArrivedToAddressEvent")
                     {
-                        item.Payload.AdditionalProperties.TryGetValue("address", out object? adress);
-                        item.Payload.AdditionalProperties.TryGetValue("transport_order_id", out object? id);
-                            item.Payload.AdditionalProperties.TryGetValue("step_index", out object? step);
-                            item.Payload.AdditionalProperties.TryGetValue("drive_start_time", out object? start);
+                        item.Payload.AdditionalProperties.TryGetValue("address", out object adress);
+                        item.Payload.AdditionalProperties.TryGetValue("transport_order_id", out object id);
+                            item.Payload.AdditionalProperties.TryGetValue("step_index", out object step);
+                            item.Payload.AdditionalProperties.TryGetValue("drive_start_time", out object start);
                             
 
                           
@@ -391,9 +383,9 @@ namespace SimpleRestApi
                     if (item.Type == "ParameterUpdateEvent")
                     {
                         Console.WriteLine("event update");
-                        item.Payload.AdditionalProperties.TryGetValue("parameter_name", out object? name);
-                        item.Payload.AdditionalProperties.TryGetValue("transport_order_id", out object? To_id);
-                        item.Payload.AdditionalProperties.TryGetValue("parameter_value", out object? value);
+                        item.Payload.AdditionalProperties.TryGetValue("parameter_name", out object name);
+                        item.Payload.AdditionalProperties.TryGetValue("transport_order_id", out object To_id);
+                        item.Payload.AdditionalProperties.TryGetValue("parameter_value", out object value);
                         //   item.Payload.AdditionalProperties.TryGetValue("drive_start_time", out object value4);
 
 
@@ -505,7 +497,7 @@ namespace SimpleRestApi
                     HttpListenerContext ctx = listener.GetContext();
                     HttpListenerRequest request = ctx.Request;
                     // Console.WriteLine($"Received request for {request.Url}");
-                    string? ua = request.Headers.Get("User-Agent");
+                    string ua = request.Headers.Get("User-Agent");
                     Console.WriteLine($"{request.HttpMethod} {request.Url}");
 
                     var body = request.InputStream;
