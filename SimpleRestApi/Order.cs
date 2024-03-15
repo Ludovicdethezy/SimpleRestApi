@@ -14,28 +14,28 @@ namespace SimpleRestApi
     {
         public class Orderrow
         {
-            public string? orderid { get; set; }
-            public string? Fetch { get; set; }
-            public string? Deliver{ get; set; }
-            public string? Date { get; set; }
-            public string? AGV { get; set; }
-            public string? step { get; set; }
-            public string? Status { get; set; }
+            public string orderid { get; set; }
+            public string Fetch { get; set; }
+            public string Deliver{ get; set; }
+            public string Date { get; set; }
+            public string AGV { get; set; }
+            public string step { get; set; }
+            public string Status { get; set; }
         }
 
 
         public class Custom_dataC
         {
-            public string? LoadWeight { get; set; }
-            public string? LoadDimensionX { get; set; }
-            public string? LoadDimensionY { get; set; }
-            public string? FetchHeight { get; set; }
-            public string? DeliverHeight { get; set; }
+            public string LoadWeight { get; set; }
+            public string LoadDimensionX { get; set; }
+            public string LoadDimensionY { get; set; }
+            public string FetchHeight { get; set; }
+            public string DeliverHeight { get; set; }
 
-            public string? AGV { get; set; }
-            public string? Area { get; set; }
+            public string AGV { get; set; }
+            public string Area { get; set; }
 
-            public int? Sequence { get; set; }
+            public int Sequence { get; set; }
 
         }
 
